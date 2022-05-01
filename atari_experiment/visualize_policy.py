@@ -25,10 +25,13 @@ if __name__ == "__main__":
     # Evaluate the agent
     mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
 
+    print(f"Mean reward {mean_reward}, Std reward {std_reward}")
+
     # Enjoy trained agent
-    
+
     obs = env.reset()
-    for i in range(1000):
+    dones = False
+    while not dones:
         action, _states = model.predict(obs)
         obs, rewards, dones, info = env.step(action)
         env.render()
