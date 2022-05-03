@@ -58,7 +58,7 @@ class PPO2(ActorCriticRLModel):
                  gamma=0.99,
                  n_steps=128,
                  pre_train_vf=False,
-                 pre_train_vf_n_steps=1000,
+                 pre_train_vf_n_steps=10000,
                  ent_coef=0.01,
                  learning_rate=2.5e-4,
                  vf_coef=0.5,
