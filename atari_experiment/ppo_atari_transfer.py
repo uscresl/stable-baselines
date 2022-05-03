@@ -58,13 +58,13 @@ def main():
                         help="Load Path of base policy",
                         required=True)
     parser.add_argument("-b",
-                    "--base_task_id",
-                    help="Base task to transfer from",
-                    required=True)
+                        "--base_task_id",
+                        help="Base task to transfer from",
+                        required=True)
     parser.add_argument("-t",
-                    "--target_task_id",
-                    help="Target task to transfer to",
-                    required=True)
+                        "--target_task_id",
+                        help="Target task to transfer to",
+                        required=True)
     args = parser.parse_args()
     logger.configure()
     train(num_timesteps=args.num_timesteps,
