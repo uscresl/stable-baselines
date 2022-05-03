@@ -59,7 +59,7 @@ def train(env_id,
                  cliprange=lambda f: f * 0.1,
                  verbose=1,
                  tensorboard_log=tensorboard_log,
-                 full_tensorboard_log=True)
+                 full_tensorboard_log=False)
     model.learn(total_timesteps=num_timesteps)
 
     model.save(model_save_path)

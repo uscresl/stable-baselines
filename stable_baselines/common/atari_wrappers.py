@@ -286,7 +286,7 @@ class LazyFrames(object):
         return self._force()[i]
 
 
-def make_atari(env_id, frameskip, mode, difficulty):
+def make_atari(env_id, frameskip, mode, difficulty, render_mode=None):
     """
     Create a wrapped atari Environment
 
@@ -301,7 +301,7 @@ def make_atari(env_id, frameskip, mode, difficulty):
         difficulty=difficulty,  # game difficulty, see Machado et al. 2018
         repeat_action_probability=0,  # Sticky action probability
         full_action_space=True,  # Use all actions
-        # render_mode="human"         # None | human | rgb_array)
+        render_mode=render_mode         # None | human | rgb_array)
     )
     # assert 'NoFrameskip' in env.spec.id
     env = NoopResetEnv(env, noop_max=30)
