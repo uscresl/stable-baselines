@@ -37,7 +37,7 @@ def train(num_timesteps,
     model = PPO2.load(base_policy_path, env=env)
     model.pre_train_vf = True
     model.tensorboard_log = tensorboard_log
-    model.full_tensorboard_log = True
+    model.full_tensorboard_log = False
 
     model.learn(total_timesteps=num_timesteps)
 
