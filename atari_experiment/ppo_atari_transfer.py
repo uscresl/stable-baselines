@@ -12,6 +12,7 @@ from atari_experiment.utils import gen_exp_log_dir_name
 def train(num_timesteps,
           seed,
           base_policy_path,
+          base_task_id,
           target_task_id,
           n_envs=8,
           nminibatches=4,
@@ -30,7 +31,7 @@ def train(num_timesteps,
         (i.e. batch size is n_steps * n_env where n_env is number of environment copies running in parallel)
     """
     exp_log_path, tensorboard_log, model_save_path = \
-        gen_exp_log_dir_name(target_task_id)
+        gen_exp_log_dir_name(target_task_id, base_task_id)
     env = VecFrameStack(make_atari_env(target_task_id, n_envs, seed), 4)
 
     model = PPO2.load(base_policy_path, env=env)
@@ -56,15 +57,20 @@ def main():
                         "--base_policy_path",
                         help="Load Path of base policy",
                         required=True)
+    parser.add_argument("-b",
+                    "--base_task_id",
+                    help="Base task to transfer from",
+                    required=True)
     parser.add_argument("-t",
                     "--target_task_id",
-                    help="Target task to transfer",
+                    help="Target task to transfer to",
                     required=True)
     args = parser.parse_args()
     logger.configure()
     train(num_timesteps=args.num_timesteps,
           seed=args.seed,
           base_policy_path=args.base_policy_path,
+          base_task_id=args.base_task_id,
           target_task_id=args.target_task_id)
 
 
