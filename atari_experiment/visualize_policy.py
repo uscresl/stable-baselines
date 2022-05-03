@@ -1,6 +1,7 @@
+import time
 import argparse
-from stable_baselines import PPO2
 
+from stable_baselines import PPO2
 from stable_baselines.common.evaluation import evaluate_policy
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines.common.cmd_util import make_atari_env
@@ -35,3 +36,4 @@ if __name__ == "__main__":
         action, _states = model.predict(obs)
         obs, rewards, dones, info = env.step(action)
         env.render()
+        time.sleep(0.01)
