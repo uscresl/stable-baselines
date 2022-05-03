@@ -4,6 +4,8 @@ import gym
 import numpy as np
 import tensorflow as tf
 
+from tqdm import tqdm
+
 from stable_baselines import logger
 from stable_baselines.common import explained_variance, ActorCriticRLModel, tf_util, SetVerbosity, TensorboardWriter
 from stable_baselines.common.runners import AbstractEnvRunner
@@ -426,7 +428,7 @@ class PPO2(ActorCriticRLModel):
         lr_now = self.learning_rate(frac)
 
         pre_train_n_epochs = pre_train_vf_n_steps // self.n_steps
-        for i in range(pre_train_n_epochs):
+        for i in tqdm(range(pre_train_n_epochs)):
             callback.on_rollout_start()
             # true_reward is the reward without discount
             rollout = self.runner.run(callback)
@@ -513,6 +515,8 @@ class PPO2(ActorCriticRLModel):
             self._setup_learn()
 
             t_first_start = time.time()
+            callback.on_training_start(locals(), globals())
+
 
             if self.pre_train_vf:
                 print("##############################")
@@ -521,9 +525,6 @@ class PPO2(ActorCriticRLModel):
                 self._pre_train_vf(callback, self.pre_train_vf_n_steps, writer)
 
             n_updates = total_timesteps // self.n_batch
-
-            callback.on_training_start(locals(), globals())
-
             for update in range(1, n_updates + 1):
                 assert self.n_batch % self.nminibatches == 0, (
                     "The number of minibatches (`nminibatches`) "

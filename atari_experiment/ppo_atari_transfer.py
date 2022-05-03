@@ -6,7 +6,7 @@ from stable_baselines.common.cmd_util import make_atari_env, atari_arg_parser
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines.common.policies import CnnPolicy, CnnLstmPolicy, CnnLnLstmPolicy, MlpPolicy
 
-exp_log = "logs/"
+from atari_experiment.utils import gen_exp_log_dir_name
 
 
 def train(num_timesteps,
@@ -29,19 +29,18 @@ def train(num_timesteps,
     :param n_steps: (int) The number of steps to run for each environment per update
         (i.e. batch size is n_steps * n_env where n_env is number of environment copies running in parallel)
     """
+    exp_log_path, tensorboard_log, model_save_path = \
+        gen_exp_log_dir_name(target_task_id)
     env = VecFrameStack(make_atari_env(target_task_id, n_envs, seed), 4)
-    ph = VecFrameStack(make_atari_env("Phoenix-v4", n_envs, seed), 4)
-
-    breakpoint()
 
     model = PPO2.load(base_policy_path, env=env)
-
-    breakpoint()
+    model.pre_train_vf = True
+    model.tensorboard_log = tensorboard_log
+    model.full_tensorboard_log = True
 
     model.learn(total_timesteps=num_timesteps)
 
-    save_path = os.path.join(exp_log, f"ppo2_{target_task_id}.zip")
-    model.save(save_path)
+    model.save(model_save_path)
 
     env.close()
     # Free memory

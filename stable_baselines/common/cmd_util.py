@@ -74,7 +74,8 @@ def make_vec_env(env_id, n_envs=1, seed=None, start_index=0,
 
 def make_atari_env(env_id, num_env, seed, wrapper_kwargs=None,
                    start_index=0, allow_early_resets=True,
-                   start_method=None, use_subprocess=False):
+                   start_method=None, use_subprocess=False,
+                   frameskip=4, mode=0, difficulty=0):
     """
     Create a wrapped, monitored VecEnv for Atari.
 
@@ -95,7 +96,7 @@ def make_atari_env(env_id, num_env, seed, wrapper_kwargs=None,
 
     def make_env(rank):
         def _thunk():
-            env = make_atari(env_id)
+            env = make_atari(env_id, frameskip, mode, difficulty)
             env.seed(seed + rank)
             env = Monitor(env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),
                           allow_early_resets=allow_early_resets)

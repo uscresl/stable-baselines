@@ -4,6 +4,7 @@ import numpy as np
 import gym
 from gym import spaces
 import cv2  # pytype:disable=import-error
+
 cv2.ocl.setUseOpenCL(False)
 
 
@@ -27,7 +28,8 @@ class NoopResetEnv(gym.Wrapper):
         if self.override_num_noops is not None:
             noops = self.override_num_noops
         else:
-            noops = self.unwrapped.np_random.randint(1, self.noop_max + 1)
+            # noops = self.unwrapped.np_random.randint(1, self.noop_max + 1)
+            noops = self.unwrapped.np_random.integers(1, self.noop_max + 1)
         assert noops > 0
         obs = None
         for _ in range(noops):
@@ -119,7 +121,8 @@ class MaxAndSkipEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         # most recent raw observations (for max pooling across time steps)
-        self._obs_buffer = np.zeros((2,) + env.observation_space.shape, dtype=env.observation_space.dtype)
+        self._obs_buffer = np.zeros((2, ) + env.observation_space.shape,
+                                    dtype=env.observation_space.dtype)
         self._skip = skip
 
     def step(self, action):
@@ -179,7 +182,9 @@ class WarpFrame(gym.ObservationWrapper):
         gym.ObservationWrapper.__init__(self, env)
         self.width = 84
         self.height = 84
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
+        self.observation_space = spaces.Box(low=0,
+                                            high=255,
+                                            shape=(self.height, self.width, 1),
                                             dtype=env.observation_space.dtype)
 
     def observation(self, frame):
@@ -190,7 +195,8 @@ class WarpFrame(gym.ObservationWrapper):
         :return: ([int] or [float]) the observation
         """
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        frame = cv2.resize(frame, (self.width, self.height), interpolation=cv2.INTER_AREA)
+        frame = cv2.resize(frame, (self.width, self.height),
+                           interpolation=cv2.INTER_AREA)
         return frame[:, :, None]
 
 
@@ -211,7 +217,10 @@ class FrameStack(gym.Wrapper):
         self.n_frames = n_frames
         self.frames = deque([], maxlen=n_frames)
         shp = env.observation_space.shape
-        self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * n_frames),
+        self.observation_space = spaces.Box(low=0,
+                                            high=255,
+                                            shape=(shp[0], shp[1],
+                                                   shp[2] * n_frames),
                                             dtype=env.observation_space.dtype)
 
     def reset(self, **kwargs):
@@ -233,7 +242,10 @@ class FrameStack(gym.Wrapper):
 class ScaledFloatFrame(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space = spaces.Box(low=0, high=1.0, shape=env.observation_space.shape, dtype=np.float32)
+        self.observation_space = spaces.Box(low=0,
+                                            high=1.0,
+                                            shape=env.observation_space.shape,
+                                            dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
@@ -274,21 +286,34 @@ class LazyFrames(object):
         return self._force()[i]
 
 
-def make_atari(env_id):
+def make_atari(env_id, frameskip, mode, difficulty):
     """
     Create a wrapped atari Environment
 
     :param env_id: (str) the environment ID
     :return: (Gym Environment) the wrapped atari environment
     """
-    env = gym.make(env_id)
+    env = gym.make(
+        env_id,
+        obs_type='rgb',  # ram | rgb | grayscale
+        frameskip=frameskip,  # frame skip
+        mode=mode,  # game mode, see Machado et al. 2018
+        difficulty=difficulty,  # game difficulty, see Machado et al. 2018
+        repeat_action_probability=0,  # Sticky action probability
+        full_action_space=True,  # Use all actions
+        # render_mode="human"         # None | human | rgb_array)
+    )
     # assert 'NoFrameskip' in env.spec.id
     env = NoopResetEnv(env, noop_max=30)
     env = MaxAndSkipEnv(env, skip=4)
     return env
 
 
-def wrap_deepmind(env, episode_life=True, clip_rewards=True, frame_stack=False, scale=False):
+def wrap_deepmind(env,
+                  episode_life=True,
+                  clip_rewards=True,
+                  frame_stack=False,
+                  scale=False):
     """
     Configure environment for DeepMind-style Atari.
 

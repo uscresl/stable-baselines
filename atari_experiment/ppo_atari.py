@@ -5,7 +5,7 @@ from stable_baselines.common.cmd_util import make_atari_env, atari_arg_parser
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines.common.policies import CnnPolicy, CnnLstmPolicy, CnnLnLstmPolicy, MlpPolicy
 
-exp_log = "logs/"
+from atari_experiment.utils import gen_exp_log_dir_name, exp_log
 
 
 def train(env_id,
@@ -14,7 +14,10 @@ def train(env_id,
           policy,
           n_envs=8,
           nminibatches=4,
-          n_steps=128):
+          n_steps=128,
+          frameskip=4,
+          mode=0,
+          difficulty=0):
     """
     Train PPO2 model for atari environment, for testing purposes
 
@@ -29,14 +32,21 @@ def train(env_id,
         (i.e. batch size is n_steps * n_env where n_env is number of environment copies running in parallel)
     """
 
-    env = VecFrameStack(make_atari_env(env_id, n_envs, seed), 4)
+    env = VecFrameStack(
+        make_atari_env(env_id,
+                       n_envs,
+                       seed,
+                       frameskip=frameskip,
+                       mode=mode,
+                       difficulty=difficulty), 4)
     policy = {
         'cnn': CnnPolicy,
         'lstm': CnnLstmPolicy,
         'lnlstm': CnnLnLstmPolicy,
         'mlp': MlpPolicy
     }[policy]
-    tensorboard_log = os.path.join(exp_log, f"ppo2_{env_id}")
+    exp_log_path, tensorboard_log, model_save_path = \
+        gen_exp_log_dir_name(env_id)
     model = PPO2(policy=policy,
                  env=env,
                  n_steps=n_steps,
@@ -48,11 +58,11 @@ def train(env_id,
                  learning_rate=lambda f: f * 2.5e-4,
                  cliprange=lambda f: f * 0.1,
                  verbose=1,
-                 )
+                 tensorboard_log=tensorboard_log,
+                 full_tensorboard_log=True)
     model.learn(total_timesteps=num_timesteps)
 
-    save_path = os.path.join(exp_log, f"ppo2_{env_id}.zip")
-    model.save(save_path)
+    model.save(model_save_path)
 
     env.close()
     # Free memory
@@ -68,12 +78,24 @@ def main():
                         help='Policy architecture',
                         choices=['cnn', 'lstm', 'lnlstm', 'mlp'],
                         default='cnn')
+    parser.add_argument('--frameskip',
+                        help='Frame skipping',
+                        default=4)
+    parser.add_argument('--mode',
+                        help='Mode of atari game',
+                        default=0)
+    parser.add_argument('--difficulty',
+                        help='Difficulty of atari.',
+                        default=0)
     args = parser.parse_args()
     logger.configure()
     train(args.env,
           num_timesteps=args.num_timesteps,
           seed=args.seed,
-          policy=args.policy)
+          policy=args.policy,
+          frameskip=args.frameskip,
+          mode=args.mode,
+          difficulty=args.difficulty)
 
 
 if __name__ == '__main__':
