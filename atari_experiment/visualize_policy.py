@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # env = VecFrameStack(make_atari_env(env_id, n_envs, seed), 4)
     env = VecFrameStack(
-        make_atari_env("ALE/Phoenix-v5",
+        make_atari_env("ALE/Assault-v5",
                        1,
                        0,
                        frameskip=4,
