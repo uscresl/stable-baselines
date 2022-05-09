@@ -93,9 +93,9 @@ def main():
           num_timesteps=args.num_timesteps,
           seed=args.seed,
           policy=args.policy,
-          frameskip=args.frameskip,
-          mode=args.mode,
-          difficulty=args.difficulty)
+          frameskip=int(args.frameskip),
+          mode=int(args.mode),
+          difficulty=int(args.difficulty))
 
 
 if __name__ == '__main__':
