@@ -6,12 +6,12 @@ from stable_baselines.common.cmd_util import make_atari_env, atari_arg_parser
 from stable_baselines.common.vec_env import VecFrameStack
 from stable_baselines.common.policies import CnnPolicy, CnnLstmPolicy, CnnLnLstmPolicy, MlpPolicy
 
-from atari_experiment.utils import gen_exp_log_dir_name
+from atari_experiment.utils import gen_exp_log_dir_name, get_base_policy_path
 
 
 def train(num_timesteps,
           seed,
-          base_policy_path,
+        #   base_policy_path,
           base_task_id,
           target_task_id,
           n_envs=8,
@@ -34,6 +34,9 @@ def train(num_timesteps,
         gen_exp_log_dir_name(target_task_id, base_task_id)
     env = VecFrameStack(make_atari_env(target_task_id, n_envs, seed), 4)
 
+    base_policy_path = get_base_policy_path(base_task_id)
+    assert base_policy_path is not None
+
     model = PPO2.load(base_policy_path, env=env)
     model.pre_train_vf = True
     model.tensorboard_log = tensorboard_log
@@ -53,10 +56,10 @@ def main():
     Runs the test
     """
     parser = atari_arg_parser()
-    parser.add_argument("-l",
-                        "--base_policy_path",
-                        help="Load Path of base policy",
-                        required=True)
+    # parser.add_argument("-l",
+    #                     "--base_policy_path",
+    #                     help="Load Path of base policy",
+    #                     required=True)
     parser.add_argument("-b",
                         "--base_task_id",
                         help="Base task to transfer from",
@@ -69,7 +72,7 @@ def main():
     logger.configure()
     train(num_timesteps=args.num_timesteps,
           seed=args.seed,
-          base_policy_path=args.base_policy_path,
+        #   base_policy_path=args.base_policy_path,
           base_task_id=args.base_task_id,
           target_task_id=args.target_task_id)
 
