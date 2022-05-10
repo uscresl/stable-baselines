@@ -51,10 +51,10 @@ for base_env in "${base_mt10_envs[@]}"; do
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --job-name=${base_env}-${strarr[0]}
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=4GB
 #SBATCH --tasks-per-node=1
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 #SBATCH --output $WORKER_OUT
 #SBATCH --error $WORKER_OUT
 
