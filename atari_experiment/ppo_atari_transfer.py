@@ -9,14 +9,16 @@ from stable_baselines.common.policies import CnnPolicy, CnnLstmPolicy, CnnLnLstm
 from atari_experiment.utils import gen_exp_log_dir_name, get_base_policy_path
 
 
-def train(num_timesteps,
-          seed,
+def train(
+        num_timesteps,
+        seed,
         #   base_policy_path,
-          base_task_id,
-          target_task_id,
-          n_envs=8,
-          nminibatches=4,
-          n_steps=128):
+        base_task_id,
+        target_task_id,
+        target_task_mode,
+        n_envs=8,
+        nminibatches=4,
+        n_steps=128):
     """
     Train PPO2 model for atari environment, for testing purposes
 
@@ -32,7 +34,8 @@ def train(num_timesteps,
     """
     exp_log_path, tensorboard_log, model_save_path = \
         gen_exp_log_dir_name(target_task_id, base_task_id)
-    env = VecFrameStack(make_atari_env(target_task_id, n_envs, seed), 4)
+    env = VecFrameStack(
+        make_atari_env(target_task_id, n_envs, seed, mode=target_task_mode), 4)
 
     base_policy_path = get_base_policy_path(base_task_id)
     assert base_policy_path is not None
@@ -68,13 +71,18 @@ def main():
                         "--target_task_id",
                         help="Target task to transfer to",
                         required=True)
+    parser.add_argument("-m",
+                        "--target_task_mode",
+                        help="Mode of the target task",
+                        required=True)
     args = parser.parse_args()
     logger.configure()
-    train(num_timesteps=args.num_timesteps,
-          seed=args.seed,
-        #   base_policy_path=args.base_policy_path,
-          base_task_id=args.base_task_id,
-          target_task_id=args.target_task_id)
+    train(
+        num_timesteps=args.num_timesteps,
+        seed=args.seed,
+        base_task_id=args.base_task_id,
+        target_task_id=args.target_task_id,
+        target_task_mode=int(args.target_task_mode))
 
 
 if __name__ == '__main__':

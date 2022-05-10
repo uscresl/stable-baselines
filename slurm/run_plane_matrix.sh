@@ -87,7 +87,7 @@ echo \"========== Setup ==========\"
 
 echo
 echo \"========== Starting python script ==========\"
-python atari_experiment/ppo_atari_transfer.py -b ALE/"${base_env}" -t ALE/"${strarr[0]}"
+python atari_experiment/ppo_atari_transfer.py -b ALE/"${base_env}" -t ALE/"${strarr[0]}" -m "${strarr[1]}"
 
 echo
 echo \"========== Done ==========\"
