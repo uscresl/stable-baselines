@@ -86,7 +86,7 @@ echo \"========== Setup ==========\"
 
 echo
 echo \"========== Starting python script ==========\"
-python atari_experiment/ppo_atari.py --env ALE/"${strarr[0]}" --mode "${strarr[1]}" --num-timesteps 10000
+python atari_experiment/ppo_atari.py --env ALE/"${strarr[0]}" --mode "${strarr[1]}"
 
 echo
 echo \"========== Done ==========\"
