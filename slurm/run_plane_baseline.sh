@@ -40,8 +40,8 @@ for elem in "${base_mt10_envs[@]}"; do
 
     echo "Running ${strarr[0]} with mode ${strarr[1]}"
 
-    WORKER_SCRIPT="$LOGDIR/worker_scripts/worker-$worker_id-$base_env.slurm"
-    WORKER_OUT="$LOGDIR/worker_logs/slurm-worker-$worker_id-$base_env.out"
+    WORKER_SCRIPT="$LOGDIR/worker_scripts/worker-$worker_id-${strarr[0]}.slurm"
+    WORKER_OUT="$LOGDIR/worker_logs/slurm-worker-$worker_id-${strarr[0]}.out"
 
     worker_id=$((${worker_id} + 1))
     echo "\
@@ -49,7 +49,7 @@ for elem in "${base_mt10_envs[@]}"; do
 
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --job-name=${base_env}
+#SBATCH --job-name=${strarr[0]}
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=4GB
 #SBATCH --tasks-per-node=1
