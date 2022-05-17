@@ -17,10 +17,18 @@ mpl.rcParams['ps.fonttype'] = 42
 index_label = "base_env"
 column_label = "target_env"
 
-def plot_matrix(matrix_df, val_label, title, save_path, vmin=0, vmax=100):
+def plot_matrix(matrix_df, val_label, title, save_path, vmin=0, vmax=1):
     matrix_pivot = matrix_df.pivot(index=index_label,
                                     columns=column_label,
                                     values=val_label)
+
+    # Divide each column by the diagonal value
+    diagonal = []
+    for base_env, row in matrix_pivot.iterrows():
+        target_env = base_env # For the sake of readability
+        diagonal.append(row[target_env])
+    matrix_pivot /= diagonal
+
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
     ax_divider = make_axes_locatable(ax)
     cbar_ax = ax_divider.append_axes("right", size="7%", pad="10%")
