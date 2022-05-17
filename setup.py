@@ -131,7 +131,8 @@ setup(name='stable_baselines',
           'opencv-python',
           'numpy',
           'pandas',
-          'matplotlib'
+          'matplotlib',
+          'seaborn'
       ] + find_tf_dependency(),
       extras_require={
         'mpi': [
