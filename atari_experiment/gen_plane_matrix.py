@@ -118,12 +118,12 @@ if __name__ == "__main__":
         matrix_df,
         "first_5M_avg_reward",
         title="Atari Planes Env Avg Reward (First 5M Env Steps)",
-        save_path=os.path.join(exp_dir, "first_5M.png"),
+        save_path=os.path.join(exp_dir, "first_5M.pdf"),
     )
 
     plot_matrix(
         matrix_df,
         "second_5M_avg_reward",
         title="Atari Planes Env Avg Reward (Second 5M Env Steps)",
-        save_path=os.path.join(exp_dir, "second_5M.png"),
+        save_path=os.path.join(exp_dir, "second_5M.pdf"),
     )
